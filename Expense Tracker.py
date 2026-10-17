@@ -1,8 +1,25 @@
 print(" ===Παρακολούθηση Εσόδων-Εξόδων=== ")
 
-expenses={}
+import json
 
+FILENAME="expenses.json"
 
+def load_expenses(filename=FILENAME):
+    try:
+        with open(filename,"r",encoding="utf-8") as file:
+            return json.load(file)
+            print("Τα έξοδα σου φορτώθηκαν επιτυχώς!")
+    except FileNotFoundError:
+        print("Δε βρέθηκε το νέο αρχείο. Ξεκινάμε με νέα έξοδα.")
+        return{}
+
+def save_expenses(expenses_dict,filename=FILENAME):
+    try:
+        with open(filename,"w",encoding="utf-8") as file:
+            json.dump(expenses_dict,file,indent=4,ensure_ascii=False)
+            print("Οι αλλαγές αποθηκεύτηκαν επιτυχώς.")
+    except Exception as e:
+        print(f"Σφάλμα κατά την αποθήκευση: {e}")
 
 def add_expense(expenses_dict,category,amount):
     if category in expenses_dict:
@@ -11,6 +28,7 @@ def add_expense(expenses_dict,category,amount):
         expenses_dict[category]=amount
     
     print(f"Προστέθηκαν {amount:.2f}€ στη κατηγορία {category}. ")
+    save_expenses(expenses_dict)
 
 def delete_expenses(expenses_dict,category):
     if category in expenses_dict:
@@ -18,6 +36,7 @@ def delete_expenses(expenses_dict,category):
         print (f"Η κατηγορία {category} διαγράφηκε επιτυχώς. ")
     else:
         print("Η κατηγορία δεν βρέθηκε. ")
+        save_expenses(expenses_dict)
 
 def get_total_expenses(expenses_dict):
     return sum(expenses_dict.values())
@@ -28,11 +47,16 @@ def subtract_amount(expenses_dict,category,amount):
         if expenses_dict[category]<=0:
             del expenses_dict[category]
             print(f"Η κατηγορία {category} μηδενίστηκε και αφαιρέθηκε.")
+            
         else:
-            print(f"Αφαιρέθηλαν {amount:.2f} από τη κατηγορία {category}. Νέο υπόλοιπο: {expenses_dict[category]:.2f}€.")
+            print(f"Αφαιρέθηκαν {amount:.2f} από τη κατηγορία {category}. Νέο υπόλοιπο: {expenses_dict[category]:.2f}€. ")
+        save_expenses(expenses_dict)
     else:
         print(f"Η κατηγορία {category} δε βρέθηκε.")
 print
+
+expenses=load_expenses()
+
 while True:
     print()
     print("1. Προσθήκη Εξόδου: ")
@@ -69,10 +93,10 @@ while True:
         if len(expenses)<=0:
             print("Δεν υπάρχουν Έξοδα! ")
         else:
-            cat_delete=input("Από ποια κατηγορία θέλεις να αφαιρέσεις το ποσό;")
+            cat_delete=input("Από ποια κατηγορία θέλεις να αφαιρέσεις το ποσό; ")
             if cat_delete in expenses:
                 try:
-                    amt=float(input("Ποιό είναι το ποσό που θέλεις να αφαιρέσεις;"))
+                    amt=float(input("Ποιό είναι το ποσό που θέλεις να αφαιρέσεις; "))
                     if amt<=0:
                         print("Το ποσό πρέπει να είναι μεγγαλύτερο από 0.")
                     else:
@@ -83,7 +107,7 @@ while True:
         print("Αντίο καλή συνέχεια!")
         break
     else :
-        print("Μη έγκυρη επιλογή προσπαθήστε ξανά.")
+        print("Μη έγκυρη επιλογή, προσπαθήστε ξανά.")
 
 
 
