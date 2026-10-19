@@ -7,8 +7,9 @@ FILENAME="expenses.json"
 def load_expenses(filename=FILENAME):
     try:
         with open(filename,"r",encoding="utf-8") as file:
-            return json.load(file)
+            data=json.load(file)
             print("Τα έξοδα σου φορτώθηκαν επιτυχώς!")
+            return data
     except FileNotFoundError:
         print("Δε βρέθηκε το νέο αρχείο. Ξεκινάμε με νέα έξοδα.")
         return{}
@@ -36,7 +37,7 @@ def delete_expenses(expenses_dict,category):
         print (f"Η κατηγορία {category} διαγράφηκε επιτυχώς. ")
     else:
         print("Η κατηγορία δεν βρέθηκε. ")
-        save_expenses(expenses_dict)
+    save_expenses(expenses_dict)
 
 def get_total_expenses(expenses_dict):
     return sum(expenses_dict.values())
@@ -53,7 +54,6 @@ def subtract_amount(expenses_dict,category,amount):
         save_expenses(expenses_dict)
     else:
         print(f"Η κατηγορία {category} δε βρέθηκε.")
-print
 
 expenses=load_expenses()
 
@@ -64,7 +64,10 @@ while True:
     print("3. Αναίρεση Εξόδων: ")
     print("4. Έξοδος απόν τη συνομιλία: ")
 
-    choice=int(input("Επίλεξε έναν αριθμό (1-4). "))
+    try:
+        choice=int(input("Επίλεξε έναν αριθμό (1-4). "))
+    except ValueError:
+        print("Μη έγκυρη καταχώρηση, παρακαλώ δώσε έναν αριθμό από το 1 εώς 4. ")
     
     if choice == 1:
         cat=input("Δώσε το όνομα της κατηγορίας: ")
@@ -83,10 +86,10 @@ while True:
             print("Δεν έχεις Έξοδα! ")
         else:
             for cat,amt in expenses.items():
-                print(f"*{cat}: {amt:2f}€ ")
+                print(f"*{cat}: {amt:.2f}€ ")
 
-                total_sum=get_total_expenses(expenses)
-                print("-------------")
+            total_sum=get_total_expenses(expenses)
+            print("-------------")
             print(f"Τα συνολικά σας έξοδα είναι {total_sum:.2f}€ ")
 
     elif choice == 3:
